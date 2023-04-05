@@ -1,0 +1,50 @@
+// MultiStepper.pde
+// -*- mode: C++ -*-
+//
+// Shows how to multiple simultaneous steppers
+// Runs one stepper forwards and backwards, accelerating and decelerating
+// at the limits. Runs other steppers at the same time
+//
+// Copyright (C) 2009 Mike McCauley
+// $Id: MultiStepper.pde,v 1.1 2011/01/05 01:51:01 mikem Exp mikem $
+ 
+#include <AccelStepper.h>
+ 
+// Define some steppers and the pins the will use
+
+//AccelStepper stepper1; // Defaults to AccelStepper::FULL4WIRE (4 pins) on 2, 3, 4, 5
+//AccelStepper stepper2(AccelStepper::FULL4WIRE, 6, 7, 8, 9);
+
+
+//AccelStepper stepper3(AccelStepper::FULL2WIRE, STEP_PIN, DIR_PIN);
+
+AccelStepper stepper(AccelStepper::FULL2WIRE, 2, 5);
+
+
+void setup()
+{  
+   stepper.setMaxSpeed(3000);
+  stepper.setAcceleration(500);
+  //stepper.setSpeed(400);
+    Serial.begin(9600);
+
+}
+ 
+void loop()
+{  
+   stepper.run();
+  if (Serial.available() > 0) {
+    String command = Serial.readString();
+
+    // Check if the command is to move the stepper motor
+    if (command.startsWith("MOVE ")) {
+      // Extract the target position from the command
+      int targetPosition = command.substring(5).toInt();
+
+      // Set the target position for the stepper motor
+      stepper.moveTo(targetPosition);
+      Serial.print("moving to");
+      Serial.println(targetPosition);
+    }
+  }
+}
