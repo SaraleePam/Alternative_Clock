@@ -31,12 +31,8 @@ while True:
     time.sleep(1)
     
     stepangle = int(get_second_hand_angle()  /360.0 * 800.0)
-<<<<<<< Updated upstream
-    ser.write(('MOVE ' + str(stepangle) + '\n').encode())
     print(stepangle)
-=======
     ser.write(('UTC_MOVE ' + str(stepangle) + '\n').encode())
->>>>>>> Stashed changes
     
            
 #ser.close()
