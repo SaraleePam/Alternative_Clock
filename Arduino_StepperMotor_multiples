@@ -11,14 +11,13 @@
 #include <AccelStepper.h>
  
 // Define some steppers and the pins the will use
-
 //AccelStepper stepper1; // Defaults to AccelStepper::FULL4WIRE (4 pins) on 2, 3, 4, 5
 //AccelStepper stepper2(AccelStepper::FULL4WIRE, 6, 7, 8, 9);
-
-
 //AccelStepper stepper3(AccelStepper::FULL2WIRE, STEP_PIN, DIR_PIN);
 
-AccelStepper stepper(AccelStepper::FULL2WIRE, 2, 5);
+AccelStepper stepper1(AccelStepper::FULL2WIRE, 2, 5);
+AccelStepper stepper2(AccelStepper::FULL2WIRE, 6, 9);
+AccelStepper stepper3(AccelStepper::FULL2WIRE, 10,13);
 
 
 void setup()
@@ -32,19 +31,40 @@ void setup()
  
 void loop()
 {  
-   stepper.run();
+  stepper.run();
   if (Serial.available() > 0) {
     String command = Serial.readString();
 
     // Check if the command is to move the stepper motor
-    if (command.startsWith("MOVE ")) {
+    if (command.startsWith("UTC_MOVE ")) {
       // Extract the target position from the command
-      int targetPosition = command.substring(5).toInt();
+      int targetPosition = command.substring(8).toInt();
 
       // Set the target position for the stepper motor
-      stepper.moveTo(targetPosition);
-      Serial.print("moving to");
+      stepper1.moveTo(targetPosition);
+      Serial.print("1moving to");
       Serial.println(targetPosition);
     }
+
+    if (command.startsWith("DAY_MOVE ")) {
+      // Extract the target position from the command
+      int targetPosition = command.substring(8).toInt();
+
+      // Set the target position for the stepper motor
+      stepper2.moveTo(targetPosition);
+      Serial.print("2moving to");
+      Serial.println(targetPosition);
+    }
+
+    if (command.startsWith("ENE_MOVE ")) {
+      // Extract the target position from the command
+      int targetPosition = command.substring(8).toInt();
+
+      // Set the target position for the stepper motor
+      stepper3.moveTo(targetPosition);
+      Serial.print("3moving to");
+      Serial.println(targetPosition);
+    }
+
   }
 }
