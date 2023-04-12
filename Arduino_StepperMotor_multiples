@@ -16,22 +16,34 @@
 //AccelStepper stepper3(AccelStepper::FULL2WIRE, STEP_PIN, DIR_PIN);
 
 AccelStepper stepper1(AccelStepper::FULL2WIRE, 2, 5);
-AccelStepper stepper2(AccelStepper::FULL2WIRE, 6, 9);
-AccelStepper stepper3(AccelStepper::FULL2WIRE, 10,13);
+AccelStepper stepper2(AccelStepper::FULL2WIRE, 3, 6);
+AccelStepper stepper3(AccelStepper::FULL2WIRE, 4,7);
 
 
 void setup()
-{  
-   stepper.setMaxSpeed(3000);
-  stepper.setAcceleration(500);
-  //stepper.setSpeed(400);
-    Serial.begin(9600);
+{ Serial.begin(9600);
+
+  stepper1.setMaxSpeed(3000);
+  stepper1.setAcceleration(500);
+  stepper1.setSpeed(400);
+
+  stepper2.setMaxSpeed(3000);
+  stepper2.setAcceleration(500);
+  stepper2.setSpeed(400);
+
+
+  stepper3.setMaxSpeed(3000);
+  stepper3.setAcceleration(500);
+  stepper3.setSpeed(400);
 
 }
  
 void loop()
 {  
-  stepper.run();
+  stepper1.run();
+  stepper2.run();
+  stepper3.run();
+  
   if (Serial.available() > 0) {
     String command = Serial.readString();
 
