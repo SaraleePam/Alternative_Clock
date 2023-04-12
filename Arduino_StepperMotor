@@ -23,15 +23,16 @@ AccelStepper stepper(AccelStepper::FULL2WIRE, 2, 5);
 
 void setup()
 {  
-   stepper.setMaxSpeed(3000);
+   stepper.setMaxSpeed(1000);
   stepper.setAcceleration(500);
-  //stepper.setSpeed(400);
+  stepper.setSpeed(400);
     Serial.begin(9600);
 
 }
  
 void loop()
 {  
+  
    stepper.run();
   if (Serial.available() > 0) {
     String command = Serial.readString();
