@@ -24,90 +24,97 @@ from itertools import cycle
 import matplotlib.pyplot as plt
 %matplotlib inline
 
-
+####################################
+microsteps =16
 today = datetime.date.today()
 access_token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1FSNzMiLCJzdWIiOiJCSFlDUEYiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJybG9jIHJociByYWN0IHJwcm8gcnNsZSIsImV4cCI6MTcxMjc3Mzk5OCwiaWF0IjoxNjgxMjM3OTk4fQ.ZUis2vDaDXPzplCLuXpXaOKO_tIHODypTIzW5cMO4Jc"
 header = {'Authorization' : 'Bearer ' + access_token, 'Content-Type':'application/json'}
+current_time_unix = int(time.time())
 
-
+####################################
 ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600)
 print("Initializing connection....")
 time.sleep(3)
 ser.reset_input_buffer()
-
+print("connected to: " + ser.portstr)
+print("moving")
+####################################
 
 def date():
     today = datetime.date.today()
     return (today)
 
+def datetime_to_unix(datetime_str):
+    dt = datetime.datetime.strptime(datetime_str, '%Y-%m-%dT%H:%M:%S.%f')
+    return int(time.mktime(dt.timetuple()))
+
     
-def sleep_time():
+def get_sleep_time_df():
     API_key = '38ca058a77bcc7e906c1c6adb7e49e35'
     url = 'https://api.fitbit.com/1.2/user/-/sleep/list.json?beforeDate={date}&sort=asc&offset=0&limit=100'
     url = url.format(date=date())
     r = requests.get(url, headers=header)    
     sleep_time_data = r.json()
-    return (sleep_time_data)
+
+    if r.status_code == 200:
+        # Check the content of the response
+        print(r.text)
+
+        # Convert the response to JSON object
+        sleep_time_data = r.json()
+
+        # Extract required fields from JSON data
+        date_sleep = [item["sleep"]["dateOfSleep"] for item in sleep_time_data]
+        length_sleep = [item["sleep"]["minutesAsleep"] for item in sleep_time_data]
+        length_sleep_sec = [minutes * 60 for minutes in length_sleep]
+        begin_sleep = [item["sleep"]["startTime"] for item in sleep_time_data]
+        unix_begin_sleep = [datetime_to_unix(dt_str) for dt_str in begin_sleep]
 
 
+        # Create DataFrame
+        df = pd.DataFrame({
+            "Date of Sleep": date_sleep,
+            "Length of Sleep (sec)": length_sleep_sec,
+            "Start Time of Sleep": unix_begin_sleep
+        })
 
-##make data fram from api data
-new_df = pd.DataFrame()
+        return(df)
 
-new_df['day'] = sleep_time()['sleep']['startTime'].dt.date
-new_df['year'] = sleep_time()['sleep']['startTime'].dt.year
-new_df['month'] = sleep_time()['sleep']['startTime'].dt.month
-new_df['date'] = pd.to_datetime(new_df[['day', 'year', 'month']])
+    else:
+        print(f"Error: {r.status_code}")
 
-new_df['begin'] = sleep_time()['sleep']['startTime'].dt.time
-new_df['lenght'] = sleep_time()['sleep']['timeInBed']
+def sleep_begin_predict():
+    alpha = 0.2
+    model = SimpleExpSmoothing(get_sleep_time_df()['Start Time of Sleep']).fit(smoothing_level=alpha)
+    forecast = model.forecast(1)
+    return(forecast)
 
+##how the forcast like? do we need to call the last row of df?
 
-new_df = new_df.set_index('date')
-new_df.head()
+def sleep_lenght_predict():
+    alpha = 0.2
+    model = SimpleExpSmoothing(get_sleep_time_df()['Length of Sleep (sec)']).fit(smoothing_level=alpha)
+    forecast = model.forecast(1)
+    return(forecast)
 
+def awake_lenght_predict():
+    awake_time = 86400-sleep_lenght_predict()
+    return(awake_time)
 
-train_data = new_df.iloc[:96]
-test_data = new_df.iloc[96:]
- 
+def get_step_angle():
+    if sleep_begin_predict() <= current_time_unix:
+        stepangle = int((current_time_unix-sunrise_unix_time) / sleep_lenght_predict() * 400.0 * microsteps)
+    else:
+        stepangle = int((current_time_unix - sunset_unix_time / awake_lenght_predict() * 400.0 * microsteps) + (400 * microsteps))
+    return (stepangle)
 
-
-span = 12
-alpha = 2/(span+1)
-simpleExpSmooth_model = SimpleExpSmoothing(train_data['begin']).fit(smoothing_level=alpha,optimized=False)
-doubleExpSmooth_model = ExponentialSmoothing(train_data['begin'],trend='add',seasonal_periods=12).fit()
-tripleExpSmooth_model = ExponentialSmoothing(train_data['begin'],trend='add',seasonal='add',seasonal_periods=12).fit()
-
-predictions_simpleExpSmooth_model = simpleExpSmooth_model.forecast(24)
-predictions_doubleExpSmooth_model = doubleExpSmooth_model.forecast(24)
-predictions_tripleExpSmooth_model = tripleExpSmooth_model.forecast(24)
-
-
-train_data['begin'].plot(legend=True,label='TRAIN')
-test_data['begin'].plot(legend=True,label='TEST',figsize=(15,6))
-# predictions_simpleExpSmooth_model.plot(legend=True,label='Simple Exponential Forecast')
-# predictions_doubleExpSmooth_model.plot(legend=True,label='Double Exponential Forecast')
-# predictions_tripleExpSmooth_model.plot(legend=True,label='Triple Exponential Forecast')
-
-
-print('Simple Exponential Smoothing RMSE: {:.4f}'.format(np.sqrt(mean_squared_error(test_data,predictions_simpleExpSmooth_model))))
-print('Double Exponential Smoothing RMSE: {:.4f}'.format(np.sqrt(mean_squared_error(test_data,predictions_doubleExpSmooth_model))))
-print('Triple Exponential Smoothing RMSE: {:.4f}'.format(np.sqrt(mean_squared_error(test_data,predictions_tripleExpSmooth_model))))
-
-test_data.std()
+    get new df when new cycle
 
 
-model = ExponentialSmoothing(new_df['begin'],trend='add',seasonal='add',seasonal_periods=12)
-results = model.fit()
-fcast = results.predict(len(new_df),len(new_df)+12).rename('Triple Exponential Forecast')
+####################################
 
-fcast.head()
+while True :
+    serial.write(('DAY_MOVE ' + str(get_step_angle()) + '\n').encode())
+    time.sleep(1)
 
-
-next_fcast_begintim = fcast.loc[today(), ['begin']]
-next_fcast_lenght = fcast.loc[today(), ['lenght']]
-
-
-#do it again to trainign the lenght
-#The code is using a fixed value for the span variable, but it is not clear what this value should be. A better approach would be to use cross-validation to determine the optimal value for this hyperparameter.
-
+####################################
