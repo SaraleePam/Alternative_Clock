@@ -74,7 +74,7 @@ while True:
         stepangle = int((current_time_unix - sunset_unix_time / get_nightlenght() * 400.0 * microsteps) + (400 * microsteps))
 
 
-    serial.write(('DAY_MOVE ' + str(stepangle) + '\n').encode())
+    serial.write(('SUN_MOVE ' + str(stepangle) + '\n').encode())
     time.sleep(1)
 
 #########################################
