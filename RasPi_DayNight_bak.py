@@ -6,7 +6,10 @@ from pprint import pprint as pp
 
 microsteps = 16
 sec = 0
-
+lat = 40.807537
+lon = -73.962570
+API_key = '38ca058a77bcc7e906c1c6adb7e49e35'
+sec = int(time.time())
 #########################
 
 ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600)
@@ -15,30 +18,29 @@ time.sleep(3)
 ser.reset_input_buffer()
 
 
+""""""
+import requests
+from pprint import pprint as pp
+url = 'https://api.sunrise-sunset.org/json?lat=36.7201600&lng=-4.4203400'
+r = requests.get(url)
+pp(r.json())
+""""""
+
+
 def Sunrise():
-    sec = 0
-    lat = 40.807537
-    lon = -73.962570
-    API_key = '38ca058a77bcc7e906c1c6adb7e49e35'
     url = 'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_key}'
     url = url.format(lat=lat, lon=lon, API_key=API_key)
     print(url)
     r = requests.get(url)
-    # r.status_code
     pp(r.json())
     Sunrise = r.json()['sys']['sunrise']
     return (Sunrise)
 
 def Sunset():
-    sec = 0
-    lat = 40.807537
-    lon = -73.962570
-    API_key = '38ca058a77bcc7e906c1c6adb7e49e35'
     url = 'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_key}'
     url = url.format(lat=lat, lon=lon, API_key=API_key)
     print(url)
     r = requests.get(url)
-    r.status_code
     pp(r.json())
     Sunset = r.json()['sys']['sunset']
     return (Sunset)
@@ -46,10 +48,10 @@ def Sunset():
 while True:
 
     if sec <= Sunrise():??
-        stepangle = int(sec /Dayleng() * 400.0 * microsteps)
+        stepangle = int(sec / (Sunset()-Sunrise()) * 400.0 * microsteps)
 
     else:
-        stepangle = int((sec /Nightleng() * 400.0 * microsteps) + (400 * microsteps))
+        stepangle = int((sec / (Sunrise()-Sunset()) * 400.0 * microsteps) + (400 * microsteps))
 
     sec += 1
     print(sec)
@@ -86,3 +88,59 @@ while True:
 """
     
 
+"""
+#https://pypi.org/project/suntime/
+
+
+import datetime
+from datetime import datetime
+from suntime import Sun
+
+lat = 40.807537
+lon = -73.962570
+abd = datetime.date(2014, 10, 3)
+sun = Sun(lat, lon)
+
+today_sr = sun.get_sunrise_time()
+today_ss = sun.get_sunset_time()
+
+ts = datetime.timestamp(today_sr)
+"""
+"""
+
+#install library https://pypi.org/project/daylight/
+
+
+import serial
+import time
+import datetime
+from datetime import datetime
+import requests
+import pytz
+import daylight
+from pprint import pprint as pp
+
+lat = 40.807537
+lon = -73.962570
+
+
+def epoch(year, month, day, hour=0, minute=0, second=0, tz=pytz.UTC):
+    return int(tz.localize(datetime.datetime(year, month, day, hour, minute, second)).timestamp())
+
+tz = pytz.timezone('US/Eastern')
+tz_offset = tz.utcoffset(datetime.datetime.utcnow()).total_seconds() / 3600
+
+# Example with GPS coords for Hyderabad, India, in Indian timezone (IST)
+sun = daylight.Sunclock(lat, lon)
+
+# Know the sunrise time for a given date
+# Returns unix timestamp for 5:42 AM
+sun.sunrise(epoch(2020, 5, 21, tz=tz))
+
+# Know the sunset time for a given date
+# Returns unix timestamp for 18:42 PM
+sun.sunset(epoch(2020, 5, 21, tz=tz))
+
+ sunrise_unix_time = sunrise_datetime.replace(tzinfo=timezone.utc).timestamp()
+
+"""

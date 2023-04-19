@@ -54,28 +54,29 @@ def get_sleep_time_df():
     url = 'https://api.fitbit.com/1.2/user/-/sleep/list.json?beforeDate={date}&sort=asc&offset=0&limit=100'
     url = url.format(date=date())
     r = requests.get(url, headers=header)    
-    sleep_time_data = r.json()
+    data = r.json()
 
     if r.status_code == 200:
         # Check the content of the response
         print(r.text)
 
-        # Convert the response to JSON object
-        sleep_time_data = r.json()
-
         # Extract required fields from JSON data
-        date_sleep = [item["sleep"]["dateOfSleep"] for item in sleep_time_data]
+        date_sleep = [item["dateOfSleep"] for item in data['sleep']]
         length_sleep = [item["sleep"]["minutesAsleep"] for item in sleep_time_data]
         length_sleep_sec = [minutes * 60 for minutes in length_sleep]
-        begin_sleep = [item["sleep"]["startTime"] for item in sleep_time_data]
-        unix_begin_sleep = [datetime_to_unix(dt_str) for dt_str in begin_sleep]
+        begin_sleep_full = [item['startTime'] for item in data['sleep']]
+        unix_begin_sleep = [datetime_to_unix(dt_str) for dt_str in begin_sleep_full]
+        begin_sleep_utc = [item['startTime'][11:19] for item in data['sleep']]
+
+    
 
 
         # Create DataFrame
         df = pd.DataFrame({
             "Date of Sleep": date_sleep,
             "Length of Sleep (sec)": length_sleep_sec,
-            "Start Time of Sleep": unix_begin_sleep
+            "Start Time of Sleep (unix)": unix_begin_sleep,
+            "Start Time of Sleep (utc)": begin_sleep_utc
         })
 
         return(df)
@@ -89,26 +90,29 @@ def sleep_begin_predict():
     forecast = model.forecast(1)
     return(forecast)
 
-##how the forcast like? do we need to call the last row of df?
+##how the forcast like? do we need to call the last row of df?  should be 1 number
 
 def sleep_lenght_predict():
     alpha = 0.2
     model = SimpleExpSmoothing(get_sleep_time_df()['Length of Sleep (sec)']).fit(smoothing_level=alpha)
     forecast = model.forecast(1)
     return(forecast)
+##how the forcast like? do we need to call the last row of df? should be 1 number
+
 
 def awake_lenght_predict():
     awake_time = 86400-sleep_lenght_predict()
     return(awake_time)
 
+
 def get_step_angle():
     if sleep_begin_predict() <= current_time_unix:
-        stepangle = int((current_time_unix-sunrise_unix_time) / sleep_lenght_predict() * 400.0 * microsteps)
+        stepangle = int((current_time_unix - sleep_begin_predict()) / sleep_lenght_predict() * 400.0 * microsteps)
     else:
         stepangle = int((current_time_unix - sunset_unix_time / awake_lenght_predict() * 400.0 * microsteps) + (400 * microsteps))
+        get_sleep_time_df()
     return (stepangle)
 
-    get new df when new cycle
 
 
 ####################################

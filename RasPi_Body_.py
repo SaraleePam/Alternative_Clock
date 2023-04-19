@@ -6,11 +6,33 @@
 
 
 import requests
+import datetime
+import time
+import serial
+from pprint import pprint as pp
+
 
 access_token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1FSNzMiLCJzdWIiOiJCSFlDUEYiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJybG9jIHJociByYWN0IHJwcm8gcnNsZSIsImV4cCI6MTcxMjc3Mzk5OCwiaWF0IjoxNjgxMjM3OTk4fQ.ZUis2vDaDXPzplCLuXpXaOKO_tIHODypTIzW5cMO4Jc"
-
 header = {'Authorization' : 'Bearer ' + access_token, 'Content-Type':'application/json'}
-response = requests.get("https://api.fitbit.com/1/user/-/profile.json", headers=header).json()
 
-print(response)
+
+ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600)
+print("Initializing connection....")
+time.sleep(3)
+ser.reset_input_buffer()
+
+
+def date():
+    today = datetime.date.today()
+    return (today)
+
+    
+def Sleep_time():
+    API_key = '38ca058a77bcc7e906c1c6adb7e49e35'
+    url = 'https://api.fitbit.com/1.2/user/-/sleep/date/{date}.json'
+    url = url.format(date=date())
+    print(url)
+    r = requests.get("https://api.fitbit.com/1/user/-/profile.json", headers=header).json()    
+    Sleep_time_data = r.json()['']['']
+    return (Sleep_time_data)
 
