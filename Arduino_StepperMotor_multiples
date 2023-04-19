@@ -1,18 +1,4 @@
 
-Saralee Sittigaroon
-  10:29 PM
-I tried 2. and i work perfectly.
-The command is send UTC_MOVE 1234.. using python. it printed the steps in the serial plotter continuously as time go by but the motor didn't move.
-I'm back from the studio now I can show you tomorrow. Good night!
-
-
-Saralee Sittigaroon
-  8:10 PM
-Hi Dan, Are you able to meet for desk crit today?
-
-
-Saralee Sittigaroon
-  10:10 PM
 // MultiStepper.pde
 // -*- mode: C++ -*-
 //
@@ -58,7 +44,7 @@ void loop()
       Serial.print("1moving to");
       Serial.println(targetPosition);
     }
-    if (command.startsWith("DAY_MOVE ")) {
+    if (command.startsWith("SUN_MOVE ")) {
       // Extract the target position from the command
       int targetPosition = command.substring(8).toInt();
       // Set the target position for the stepper motor
@@ -76,4 +62,4 @@ void loop()
     }
   }
 
-
+}
