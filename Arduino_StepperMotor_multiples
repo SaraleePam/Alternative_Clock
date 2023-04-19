@@ -1,3 +1,18 @@
+
+Saralee Sittigaroon
+  10:29 PM
+I tried 2. and i work perfectly.
+The command is send UTC_MOVE 1234.. using python. it printed the steps in the serial plotter continuously as time go by but the motor didn't move.
+I'm back from the studio now I can show you tomorrow. Good night!
+
+
+Saralee Sittigaroon
+  8:10 PM
+Hi Dan, Are you able to meet for desk crit today?
+
+
+Saralee Sittigaroon
+  10:10 PM
 // MultiStepper.pde
 // -*- mode: C++ -*-
 //
@@ -7,75 +22,58 @@
 //
 // Copyright (C) 2009 Mike McCauley
 // $Id: MultiStepper.pde,v 1.1 2011/01/05 01:51:01 mikem Exp mikem $
- 
 #include <AccelStepper.h>
- 
 // Define some steppers and the pins the will use
 //AccelStepper stepper1; // Defaults to AccelStepper::FULL4WIRE (4 pins) on 2, 3, 4, 5
 //AccelStepper stepper2(AccelStepper::FULL4WIRE, 6, 7, 8, 9);
 //AccelStepper stepper3(AccelStepper::FULL2WIRE, STEP_PIN, DIR_PIN);
-
 AccelStepper stepper1(AccelStepper::FULL2WIRE, 2, 5);
 AccelStepper stepper2(AccelStepper::FULL2WIRE, 3, 6);
 AccelStepper stepper3(AccelStepper::FULL2WIRE, 4, 7);
-
-
 void setup()
 { Serial.begin(9600);
-
   stepper1.setMaxSpeed(3000);
   stepper1.setAcceleration(500);
   stepper1.setSpeed(400);
-
   stepper2.setMaxSpeed(3000);
   stepper2.setAcceleration(500);
   stepper2.setSpeed(400);
-
-
   stepper3.setMaxSpeed(3000);
   stepper3.setAcceleration(500);
   stepper3.setSpeed(400);
-
 }
- 
 void loop()
-{  
+{
   stepper1.run();
   stepper2.run();
   stepper3.run();
-  
   if (Serial.available() > 0) {
     String command = Serial.readString();
-
     // Check if the command is to move the stepper motor
     if (command.startsWith("UTC_MOVE ")) {
       // Extract the target position from the command
       int targetPosition = command.substring(8).toInt();
-
       // Set the target position for the stepper motor
       stepper1.moveTo(targetPosition);
       Serial.print("1moving to");
       Serial.println(targetPosition);
     }
-
     if (command.startsWith("DAY_MOVE ")) {
       // Extract the target position from the command
       int targetPosition = command.substring(8).toInt();
-
       // Set the target position for the stepper motor
       stepper2.moveTo(targetPosition);
       Serial.print("2moving to");
       Serial.println(targetPosition);
     }
-
     if (command.startsWith("ENE_MOVE ")) {
       // Extract the target position from the command
       int targetPosition = command.substring(8).toInt();
-
       // Set the target position for the stepper motor
       stepper3.moveTo(targetPosition);
       Serial.print("3moving to");
       Serial.println(targetPosition);
     }
-
   }
+
+
