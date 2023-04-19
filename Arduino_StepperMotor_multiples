@@ -17,7 +17,7 @@
 
 AccelStepper stepper1(AccelStepper::FULL2WIRE, 2, 5);
 AccelStepper stepper2(AccelStepper::FULL2WIRE, 3, 6);
-AccelStepper stepper3(AccelStepper::FULL2WIRE, 4,7);
+AccelStepper stepper3(AccelStepper::FULL2WIRE, 4, 7);
 
 
 void setup()
@@ -79,4 +79,3 @@ void loop()
     }
 
   }
-}
