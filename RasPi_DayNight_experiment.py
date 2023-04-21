@@ -88,9 +88,10 @@ def get_step_angle():
 
 
 while True:
-
-    ser.write(('DAY_MOVE ' + str(get_step_angle()) + '\n').encode())
-    time.sleep(5)
+    time.sleep(5)   
+    stepangle= get_step_angle())
+    ser.write(('DAY_MOVE ' + str(stepangle) + '\n').encode())
+    
 
 
 #########################################
