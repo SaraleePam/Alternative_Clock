@@ -44,7 +44,7 @@ void loop()
       Serial.print("1moving to");
       Serial.println(targetPosition);
     }
-    if (command.startsWith("SUN_MOVE ")) {
+    if (command.startsWith("DAY_MOVE ")) {
       // Extract the target position from the command
       int targetPosition = command.substring(8).toInt();
       // Set the target position for the stepper motor
