@@ -2,7 +2,7 @@ import serial
 import time
 import datetime
 
-microsteps = 160
+microsteps = 300
 day = 0
 
 ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600)

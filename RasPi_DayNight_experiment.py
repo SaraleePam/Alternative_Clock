@@ -5,7 +5,7 @@ import requests
 from datetime import  timedelta
 from pprint import pprint as pp
 
-microsteps = 160
+microsteps = 300
 lat = 40.807537
 lon = -73.962570
 today = datetime.date.today()
