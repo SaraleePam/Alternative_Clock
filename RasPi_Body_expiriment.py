@@ -122,6 +122,7 @@ def get_sleep_time_df():
 
 
         return(df)
+    
 
     else:
         print(f"Error: {r.status_code}")
@@ -195,6 +196,8 @@ awake_begin_unix = awake_begin_local.timestamp()
 print(tomorrow)
 print(awake_begin_local)
 print(awake_begin_unix)
+
+df = get_sleep_time_df()
 
 
 # calculate last wake begin time
