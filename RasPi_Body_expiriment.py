@@ -156,7 +156,7 @@ print(midnight)
 if sleep_time > midnight.time():
   sleep_begin_local = local_timezone.localize(datetime.datetime.combine(tomorrow, sleep_time))
 else:
-    sleep_begin_local = local_timezone.localize(datetime.datetime.combine(today, sleep_time))
+  sleep_begin_local = local_timezone.localize(datetime.datetime.combine(today, sleep_time))
 
 
 sleep_begin_unix = sleep_begin_local.timestamp()
@@ -197,12 +197,12 @@ print(tomorrow)
 print(awake_begin_local)
 print(awake_begin_unix)
 
-df = get_sleep_time_df()
+dataframe = get_sleep_time_df()
 
 
 # calculate last wake begin time
-last_sleep_time = df.iloc[-1, -1]
-last_sleep_lenght = df.iloc[-1,1]
+last_sleep_time = dataframe.iloc[-1, -1]
+last_sleep_lenght = dataframe.iloc[-1,1]
 last_awake_time = seconds_to_time(last_sleep_time + last_sleep_lenght)
 print(last_awake_time)
 
