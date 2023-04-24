@@ -3,6 +3,7 @@ import time
 import datetime
 import requests
 from datetime import  timedelta
+
 from pprint import pprint as pp
 
 microsteps = 16
@@ -11,9 +12,10 @@ lon = -73.962570
 today = datetime.date.today()
 tomorrow = today + timedelta(days=1)
 yesterday = today + timedelta(days=-1)
+
+
 current_time_unix = int(time.time())
 
-#########################################
 
 ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600)
 print("Initializing connection....")
@@ -23,7 +25,6 @@ print("HELLO!")
 print("connected to: " + ser.portstr)
 print("moving")
 
-#########################################
 
 url = 'https://api.sunrise-sunset.org/json?lat={lat}&lng={lon}&date={date}'
 url = url.format(lat=lat, lon=lon, date=today)
@@ -60,8 +61,6 @@ last_sunset_obj = datetime.datetime.strptime(last_sunset, "%I:%M:%S %p")
 last_sunset_datetime_obj = datetime.datetime.combine(yesterday, last_sunset_obj.time())
 last_sunset_unix_time = last_sunset_datetime_obj.timestamp()
 
-#######################
-
 def get_daylenght():
     daylenght = sunset_unix_time - sunrise_unix_time
     return daylenght
@@ -70,6 +69,7 @@ def get_daylenght():
 def get_nightlenght():
     nightlenght = next_sunrise_unix_time - sunset_unix_time
     return nightlenght
+
 
 def get_step_angle():
     if sunrise_unix_time <= current_time_unix <= sunset_unix_time:
@@ -84,18 +84,10 @@ def get_step_angle():
 
     return(stepangle)
 
-#########################################
-
 
 
 while True:
-    time.sleep(5)   
-    stepangle= get_step_angle()
-    print(stepangle)
-    ser.write(('DAY_MOVE ' + str(stepangle) + '\n').encode())
-    
 
-
-#########################################
-
+    ser.write(('SUN_MOVE ' + str(get_step_angle()) + '\n').encode())
+    time.sleep(5)
 
