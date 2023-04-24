@@ -222,7 +222,9 @@ def get_step_angle():
     return(stepangle)
 ########################
 
-
-while True :
-    ser.write(('ENE_MOVE ' + str(get_step_angle()) + '\n').encode())
-    time.sleep(5)
+while True:
+    time.sleep(5)   
+    stepangle= get_step_angle()
+    print(stepangle)
+    ser.write(('ENE_MOVE ' + str(stepangle) + '\n').encode())
+    
