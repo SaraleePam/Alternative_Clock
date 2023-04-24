@@ -87,7 +87,7 @@ void loop()
         int targetPosition = command.substring(8).toInt();
   
         // Set the target position for the stepper motor
-        stepper2.moveTo(targetPosition);
+        stepper1.moveTo(targetPosition);
         Serial.print("1moving to");
         Serial.println(targetPosition);
       }
@@ -97,7 +97,7 @@ void loop()
         int targetPosition = command.substring(8).toInt();
   
         // Set the target position for the stepper motor
-        stepper3.moveTo(targetPosition);
+        stepper2.moveTo(targetPosition);
         Serial.print("2moving to");
         Serial.println(targetPosition);
       }
@@ -107,7 +107,7 @@ void loop()
         int targetPosition = command.substring(8).toInt();
   
         // Set the target position for the stepper motor
-        stepper1.moveTo(targetPosition);
+        stepper3.moveTo(targetPosition);
         Serial.print("3moving to");
         Serial.println(targetPosition);
       }
