@@ -46,20 +46,27 @@ last_sunset = r_yesterday.json()['results']['sunset']
 
 sunrise_obj = datetime.datetime.strptime(sunrise, "%I:%M:%S %p")
 sunrise_datetime_obj = datetime.datetime.combine(today, sunrise_obj.time())
-sunrise_unix_time = sunrise_datetime_obj.timestamp()
+sunrise_unix_time = (sunrise_datetime_obj.timestamp())-14400
 
 sunset_obj = datetime.datetime.strptime(sunset, "%I:%M:%S %p")
 sunset_datetime_obj = datetime.datetime.combine(today, sunset_obj.time())
-sunset_unix_time = sunset_datetime_obj.timestamp()
+sunset_unix_time = (sunset_datetime_obj.timestamp())-14400
 
 next_sunrise_obj = datetime.datetime.strptime(next_sunrise, "%I:%M:%S %p")
 next_sunrise_datetime_obj = datetime.datetime.combine(tomorrow, next_sunrise_obj.time())
-next_sunrise_unix_time = next_sunrise_datetime_obj.timestamp()
+next_sunrise_unix_time = (next_sunrise_datetime_obj.timestamp())-14400
 
 
 last_sunset_obj = datetime.datetime.strptime(last_sunset, "%I:%M:%S %p")
 last_sunset_datetime_obj = datetime.datetime.combine(yesterday, last_sunset_obj.time())
-last_sunset_unix_time = last_sunset_datetime_obj.timestamp()
+last_sunset_unix_time = (last_sunset_datetime_obj.timestamp())-14400
+
+
+
+print(sunrise)
+print(sunrise_datetime_obj)
+print(sunrise_unix_time)
+
 
 def get_daylenght():
     daylenght = sunset_unix_time - sunrise_unix_time
@@ -89,5 +96,7 @@ def get_step_angle():
 while True:
 
     ser.write(('SUN_MOVE ' + str(get_step_angle()) + '\n').encode())
+    print(get_step_angle())
     time.sleep(5)
+    
 
