@@ -18,7 +18,6 @@ from datetime import timedelta
 import pandas as pd
 from pandas import DataFrame
 import numpy as np
-from sklearn.metrics import mean_squared_error
 from statsmodels.tools.eval_measures import rmse
 from statsmodels.tsa.holtwinters import SimpleExpSmoothing, ExponentialSmoothing
 ############################
@@ -225,5 +224,5 @@ def get_step_angle():
 
 
 while True :
-    ser.write(('DAY_MOVE ' + str(get_step_angle()) + '\n').encode())
+    ser.write(('ENE_MOVE ' + str(get_step_angle()) + '\n').encode())
     time.sleep(5)
