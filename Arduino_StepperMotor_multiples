@@ -82,7 +82,7 @@ void loop()
       String command = Serial.readString();*/
   
       // Check if the command is to move the stepper motor
-      if (command.startsWith("UTC_MOVE ")) {
+      if (command.startsWith("ENE_MOVE ")) {
         // Extract the target position from the command
         int targetPosition = command.substring(8).toInt();
   
@@ -92,7 +92,7 @@ void loop()
         Serial.println(targetPosition);
       }
   
-      if (command.startsWith("DAY_MOVE ")) {
+      if (command.startsWith("UTC_MOVE ")) {
         // Extract the target position from the command
         int targetPosition = command.substring(8).toInt();
   
@@ -102,7 +102,8 @@ void loop()
         Serial.println(targetPosition);
       }
   
-      if (command.startsWith("ENE_MOVE ")) {
+      if (command.startsWith("DAY
+      _MOVE ")) {
         // Extract the target position from the command
         int targetPosition = command.substring(8).toInt();
   
