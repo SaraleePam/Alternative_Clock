@@ -14,7 +14,8 @@ tomorrow = today + timedelta(days=1)
 yesterday = today + timedelta(days=-1)
 
 
-current_time_unix = int(time.time())
+def current_time_unix():
+    return int(time.time())
 
 
 ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600)
@@ -79,15 +80,15 @@ def get_nightlenght():
 
 
 def get_step_angle():
-    if sunrise_unix_time <= current_time_unix <= sunset_unix_time:
-        stepangle = int((current_time_unix - sunrise_unix_time) / get_daylenght() * 400.0 * microsteps)
+    if sunrise_unix_time <= current_time_unix() <= sunset_unix_time:
+        stepangle = int((current_time_unix() - sunrise_unix_time) / get_daylenght() * 400.0 * microsteps)
 
    #for night time after midnight (the today sunset&sunrise is not the same)
-    if (current_time_unix < sunrise_unix_time) and (current_time_unix < sunset_unix_time):
-        stepangle = int(((current_time_unix - last_sunset_unix_time) / get_nightlenght() * 400.0 * microsteps) + (400 * microsteps))
+    if (current_time_unix() < sunrise_unix_time) and (current_time_unix() < sunset_unix_time):
+        stepangle = int(((current_time_unix() - last_sunset_unix_time) / get_nightlenght() * 400.0 * microsteps) + (400 * microsteps))
 
     else:
-        stepangle = int(((current_time_unix - sunset_unix_time) / get_nightlenght() * 400.0 * microsteps) + (400 * microsteps))
+        stepangle = int(((current_time_unix() - sunset_unix_time) / get_nightlenght() * 400.0 * microsteps) + (400 * microsteps))
 
     return(stepangle)
 
