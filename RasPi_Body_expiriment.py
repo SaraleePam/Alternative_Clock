@@ -1,4 +1,4 @@
-
+#Login Fitbit sscu email
 #get all the keys https://dev.fitbit.com/apps/details/23QR73
 #Fill in implicit grant flow https://dev.fitbit.com/build/reference/web-api/authorization/authorize/
 #in browser https://www.fitbit.com/oauth2/authorize?response_type=token&client_id=23QR73&redirect_uri=http://localhost:8080&expires_in=31536000&scope=activity%20sleep%20heartrate%20location%20Profile
